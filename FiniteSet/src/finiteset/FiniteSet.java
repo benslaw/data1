@@ -14,6 +14,7 @@ public class FiniteSet {
 
     ArrayList<Integer> theSet;
     public static FiniteSet tester = new FiniteSet(new ArrayList<Integer>());
+    public static FiniteSet tester2 = new FiniteSet(new ArrayList<Integer>());
     public static FiniteSet mt_tester = new FiniteSet(new ArrayList<Integer>());
     
     FiniteSet (ArrayList<Integer> theSet) {
@@ -67,6 +68,39 @@ public class FiniteSet {
         }
     }
     
+    public static FiniteSet removey (FiniteSet abcd, int x) {
+        FiniteSet temp = new FiniteSet(new ArrayList<Integer>());
+        for(int i = 0; i < abcd.theSet.size(); i++) {
+            if(abcd.theSet.get(i) != x) {
+                temp.theSet.add(abcd.theSet.get(i));
+            }
+        }
+        return temp;
+    }
+    
+    public static FiniteSet removeDupes (FiniteSet input) {
+        FiniteSet answer = new FiniteSet(new ArrayList<Integer>());
+        for(int i = 0; i < input.theSet.size(); i++) {
+            int element = input.theSet.get(i);
+            input = removey(input, element);
+            if(FiniteSet_Member(input, element) == false) {
+                answer.theSet.add(element);
+            }
+        }
+        return answer;
+    }
+    
+    public static FiniteSet uniony (FiniteSet set1, FiniteSet set2) {
+        FiniteSet answer = new FiniteSet(new ArrayList<Integer>());
+        for(int i = 0; i < set1.theSet.size(); i++) {
+            answer = addy(answer, set1.theSet.get(i));
+        }
+        for(int j = 0; j < set2.theSet.size(); j++) {
+            answer = addy(answer, set2.theSet.get(j));
+        }
+        return answer;
+    }
+    
     public static ArrayList<Integer> FiniteSetPrint (FiniteSet abcd) {
         return abcd.theSet;
     }
@@ -88,5 +122,34 @@ public class FiniteSet {
         System.out.println(FiniteSet_Member(tester, memberVar)
                 + " should be " + true + " only when " + memberVar 
                 + " is in the non-empty finite set.");
+        System.out.println(memberVar 
+                + " will now be added to the non-empty finite set:");
+        tester = addy(tester, memberVar);
+        System.out.println(FiniteSetPrint(tester));
+        System.out.println(FiniteSet_Member(tester, memberVar) 
+                + " should be " + true);
+        int varPos2 = (int) Math.floor(Math.random()*tester.theSet.size());
+        int memberVar2 = tester.theSet.get(varPos2);
+        System.out.println(memberVar2 + " is element number " + varPos2 
+                + " the non-empty finite set (starting from index 0).");
+        System.out.println("This element will now be removed "
+                + "from the non-empty finite set.");
+        System.out.println(FiniteSetPrint(removey(tester, memberVar2)));
+        FiniteSet dupeSet = new FiniteSet(new ArrayList<Integer>());
+        dupeSet.theSet.add(memberVar2);
+        dupeSet.theSet.add(memberVar2);
+        dupeSet.theSet.add(memberVar2);
+        dupeSet.theSet.add(memberVar);
+        dupeSet.theSet.add(memberVar);
+        dupeSet.theSet.add(memberVar2);
+        dupeSet.theSet.add(memberVar);
+        System.out.println("Testing for removeDupes:");
+        System.out.println("The set with duplicates is " 
+                + FiniteSetPrint(dupeSet));
+        System.out.println("The set with dublicates removed is " 
+                + FiniteSetPrint(removeDupes(dupeSet)));
+        tester2 = create_and_populateFiniteSet(5);
+        System.out.println(FiniteSetPrint(tester2));
+        System.out.println(FiniteSetPrint(uniony(tester, tester2)));
     }
 }
