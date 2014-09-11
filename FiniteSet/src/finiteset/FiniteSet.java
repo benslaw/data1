@@ -101,6 +101,52 @@ public class FiniteSet {
         return answer;
     }
     
+    public static FiniteSet intery(FiniteSet set1, FiniteSet set2) {
+        FiniteSet answer = new FiniteSet(new ArrayList<Integer>());
+        for (int i = 0; i < set1.theSet.size(); i++) {
+            if (FiniteSet_Member(set2, set1.theSet.get(i))) {
+                answer = addy(answer, set1.theSet.get(i));
+            }
+        }
+        return answer;
+    }
+    
+    public static FiniteSet diffy (FiniteSet set1, FiniteSet set2) {
+        FiniteSet answer = new FiniteSet(new ArrayList<Integer>());
+        for( int i = 0; i < set1.theSet.size(); i++) {
+            int tempvar = set1.theSet.get(i);
+            if(FiniteSet_Member(set2, tempvar) == false) {
+                answer = addy(answer, tempvar);
+            }
+        }
+        return answer;
+    }
+    
+    public static boolean equaly (FiniteSet set1, FiniteSet set2) {
+        FiniteSet diffy1 = diffy(set1, set2);
+        FiniteSet diffy2 = diffy(set2, set1);
+        if((diffy1.isEmptyHuh()) && diffy2.isEmptyHuh()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public static boolean subsety (FiniteSet set1, FiniteSet set2) {
+        int status = 0;
+        for(int i = 0; i < set2.theSet.size(); i++) {
+            int tempVar = set2.theSet.get(i);
+            if(!FiniteSet_Member(set1, tempVar)) {
+                status = 1;
+            }
+        }
+        if (status == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static ArrayList<Integer> FiniteSetPrint (FiniteSet abcd) {
         return abcd.theSet;
     }
@@ -151,5 +197,16 @@ public class FiniteSet {
         tester2 = create_and_populateFiniteSet(5);
         System.out.println(FiniteSetPrint(tester2));
         System.out.println(FiniteSetPrint(uniony(tester, tester2)));
+        System.out.println(FiniteSetPrint(intery(tester, tester2)));
+        System.out.println(FiniteSetPrint(diffy(tester, tester2)));
+        System.out.println(equaly(tester, tester) + " should be " + true);
+        System.out.println(equaly(tester2, tester2) + " should be " + true);
+        System.out.println(equaly(tester, tester2) + " should be true only "
+                + "if " + FiniteSetPrint(tester) + " is the same as "
+                + FiniteSetPrint(tester2));
+        System.out.println(subsety(tester, tester) + " should be " + true);
+        System.out.println(subsety(dupeSet, removeDupes(dupeSet)) 
+                + " should be " + true);
+        System.out.println(subsety(tester, tester2));
     }
 }
