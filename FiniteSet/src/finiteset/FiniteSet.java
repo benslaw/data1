@@ -28,6 +28,12 @@ public class FiniteSet {
         
         public BST inter( BST set );
         
+        public BST diff( BST set );
+        
+        public boolean equal( BST set );
+        
+        public boolean subset( BST set );
+        
     }
     
     static class Empty implements BST {
@@ -60,6 +66,26 @@ public class FiniteSet {
         
         public BST inter(BST set) {
             return new Empty();
+        }
+        
+        public BST diff(BST set) {
+            return set;
+        }
+        
+        public boolean equal(BST set) {
+            if(set.isEmptyHuh()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        public boolean subset(BST set) {
+            if(set.isEmptyHuh()) {
+                return true;
+            } else {
+                return false;
+            }
         }
         
     }
@@ -104,14 +130,12 @@ public class FiniteSet {
         }
         
         public BST remove(int thing) {
-            if (thing == this.here) {
-                return this.lefty.union(this.righty);
-            } else if (thing < this.here) {
-                return new notEmpty(this.here, this.lefty.remove(thing), 
-                        this.righty);
+            if (thing == here) {
+                return lefty.union(righty);
+            } else if (thing < here) {
+                return new notEmpty(here, lefty.remove(thing), righty);
             } else {
-                return new notEmpty(this.here, this.lefty, 
-                        this.righty.remove(thing));
+                return new notEmpty(here, lefty, righty.remove(thing));
             }
         }
         
@@ -121,8 +145,30 @@ public class FiniteSet {
         
         public BST inter(BST set) {
             if(set.member(here)) {
-                
+                return new notEmpty(here, lefty.inter(set), righty.inter(set));
+            } else {
+                return lefty.inter(set).union(righty.inter(set));
             }
+        }
+        
+        public BST diff(BST set) {
+            if(set.member(here)) {
+                return lefty.diff(set).union(righty.diff(set));
+            } else {
+                return new notEmpty(here, lefty.diff(set), righty.diff(set));
+            }
+        }
+        
+        public boolean equal(BST set) {
+            if((this.diff(set).isEmptyHuh()) && (set.diff(this).isEmptyHuh())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        public boolean subset(BST set) {
+            return true;
         }
         
     }
@@ -142,13 +188,44 @@ public class FiniteSet {
         }
     }
     
-    public static boolean check_union( BST set1, BST set2 ) {
+    //check two properties of remove:
+    //1 --> when removing an element from a BST, the cardinality will be less
+    //      than or equal to the original cardinality
+    //2 --> when removing an element from a BST, member should return false
+    //      when queried about the removed element
+    public static void check_remove(BST set) {
+        int elt = randomInt(0,10);
+        BST remove_set = set.remove(elt);
+        if (remove_set.cardinality() <= set.cardinality() ) {
+ //               && (remove_set.member(elt) == false)) {
+            System.out.println("Success for check_remove");
+        } else {
+            System.out.println("Failure for check_remove");
+        }
+    }
+    
+    //check two properties of add:
+    //1 --> when adding an element to a BST, the cardinality will be greater
+    //      than or equal to the original cardinality
+    //2 --> when adding an element to a BST, member should return true when
+    //      queried about the added element
+    public static void check_add(BST set) {
+        int elt = randomInt(0,10);
+        BST add_set = set.add(elt);
+        if ((set.cardinality() <= add_set.cardinality()) && add_set.member(elt)) {
+            System.out.println("Success for check_add");
+        } else {
+            System.out.println("Failure for check_add");
+        }
+    }
+    
+    public static void check_union( BST set1, BST set2 ) {
         int elt = randomInt(0,100);
         if ((set1.add(elt)).union(set2).member(elt) &&
                 set1.union(set2.add(elt)).member(elt)) {
-            return true;
+            System.out.println("Success for check_union");
         } else {
-            return false;
+            System.out.println("Failure for check_union");
         }
     }
 
@@ -161,7 +238,11 @@ public class FiniteSet {
             int lengthy2 = randomInt(0,10);
             BST x = randomBST(lengthy);
             BST y = randomBST(lengthy2);
-            System.out.println(check_union(x, y));
+            check_union(x, y);
+            check_add(x);
+            check_add(y);
+            check_remove(x);
+            check_remove(y);
         }
         
         
