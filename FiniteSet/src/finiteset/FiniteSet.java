@@ -160,15 +160,15 @@ public class FiniteSet {
         }
         
         public boolean equal(BST set) {
-            if((this.diff(set).isEmptyHuh()) && (set.diff(this).isEmptyHuh())) {
-                return true;
-            } else {
-                return false;
-            }
+            return (this.diff(set).isEmptyHuh() && set.diff(this).isEmptyHuh());
         }
         
         public boolean subset(BST set) {
-            return true;
+            if(set.member(here)) {
+                return lefty.subset(set) && righty.subset(set);
+            } else {
+                return false;
+            }
         }
         
     }
@@ -204,6 +204,15 @@ public class FiniteSet {
         }
     }
     
+    public static void check_subset(BST set1, BST set2, BST set3) {
+        if(set1.union(set2).subset(set3) == 
+                (set1.subset(set3) && set2.subset(set3))) {
+            System.out.println("Success for check_subset");
+        } else {
+            System.out.println("Failure for check_subset");
+        }
+    }
+    
     //check two properties of add:
     //1 --> when adding an element to a BST, the cardinality will be greater
     //      than or equal to the original cardinality
@@ -236,13 +245,16 @@ public class FiniteSet {
         for(int i = 0; i < 10; i++) {
             int lengthy = randomInt(0,10);
             int lengthy2 = randomInt(0,10);
+            int lengthy3 = randomInt(0,10);
             BST x = randomBST(lengthy);
             BST y = randomBST(lengthy2);
+            BST z = randomBST(lengthy3);
             check_union(x, y);
             check_add(x);
             check_add(y);
             check_remove(x);
             check_remove(y);
+            check_subset(x,y,z);
         }
         
         
