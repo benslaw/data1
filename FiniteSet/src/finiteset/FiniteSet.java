@@ -13,27 +13,16 @@ import java.util.*;
 public class FiniteSet {
 
     interface BST {
-        
-        public int cardinality();
-        
+        public int cardinality();   
         public boolean isEmptyHuh();
-        
         public boolean member( int thing );
-        
         public BST add( int thing );
-        
         public BST remove( int thing );
-        
         public BST union( BST set );
-        
         public BST inter( BST set );
-        
         public BST diff( BST set );
-        
         public boolean equal( BST set );
-        
         public boolean subset( BST set );
-        
     }
     
     static class Empty implements BST {
@@ -73,19 +62,11 @@ public class FiniteSet {
         }
         
         public boolean equal(BST set) {
-            if(set.isEmptyHuh()) {
-                return true;
-            } else {
-                return false;
-            }
+            return set.isEmptyHuh();
         }
         
         public boolean subset(BST set) {
-            if(set.isEmptyHuh()) {
-                return true;
-            } else {
-                return false;
-            }
+            return set.isEmptyHuh();
         }
         
     }
@@ -160,14 +141,14 @@ public class FiniteSet {
         }
         
         public boolean equal(BST set) {
-            return (this.diff(set).isEmptyHuh() && set.diff(this).isEmptyHuh());
+            return (this.subset(set) && set.subset(this));
         }
         
         public boolean subset(BST set) {
-            if(set.member(here)) {
-                return lefty.subset(set) && righty.subset(set);
-            } else {
+            if(!set.member(here)) {
                 return false;
+            } else {
+                return (lefty.subset(set) && righty.subset(set));
             }
         }
         
@@ -204,8 +185,11 @@ public class FiniteSet {
         }
     }
     
+    //check a property of subset:
+    //for all set1, set2, set3: 
+    //set1.union(set2).subset(set3) = set1.subset(set3) && set2.subset(set3)
     public static void check_subset(BST set1, BST set2, BST set3) {
-        if(set1.union(set2).subset(set3) == 
+        if((set1.union(set2)).subset(set3) == 
                 (set1.subset(set3) && set2.subset(set3))) {
             System.out.println("Success for check_subset");
         } else {
@@ -228,13 +212,74 @@ public class FiniteSet {
         }
     }
     
+    //check the following property of union:
+    //member (union set1 set2) elt = (member set1 elt || member set2 elt)
     public static void check_union( BST set1, BST set2 ) {
         int elt = randomInt(0,100);
-        if ((set1.add(elt)).union(set2).member(elt) &&
-                set1.union(set2.add(elt)).member(elt)) {
-            System.out.println("Success for check_union");
+        BST temp = (set1.union(set2)).add(elt);
+        if (temp.member(elt)) {
+            if (set1.member(elt) || set2.member(elt)) {
+                System.out.println("Success for check_union");
+            }
         } else {
             System.out.println("Failure for check_union");
+        }
+//        if ((set1.add(elt)).union(set2).member(elt) &&
+//                set1.union(set2.add(elt)).member(elt)) {
+//            System.out.println("Success for check_union");
+//        } else {
+//            System.out.println("Failure for check_union");
+//        }
+    }
+    
+    //check a property of isEmptyHuh:
+    //if a set x is empty, x.isEmptyHuh() returns true and x.cardinality()
+    //returns zero
+    //so if cardinality is zero and isEmptyHuh is true, success
+    //if cardinality is non-zero and isEmptyHuh is false, success
+    //else failure
+    public static void check_empty(BST set) {
+        if(set.cardinality() == 0) {
+            if(set.isEmptyHuh()) {
+                System.out.println("Success for check_empty");
+            } else {
+                System.out.println("Failure for check_empty");
+            }
+        } else if(!set.isEmptyHuh()) {
+            System.out.println("Success for check_empty");
+        } else {
+            System.out.println("Failure for check_empty");
+        }
+    }
+    
+    //check a property of inter
+    //if an element exists in two distinct sets set1 and set2, then
+    //set1.inter(set2) should not be empty
+    public static void check_inter(BST set1, BST set2, int elt) {
+        set1 = set1.add(elt);
+        set2 = set2.add(elt);
+        if(set1.member(elt) && set2.member(elt)) {
+            if(!set1.inter(set2).isEmptyHuh()) {
+                System.out.println("Success for check_inter");
+            } else {
+                System.out.println("Failure for check_inter");
+            }
+        } else {
+            System.out.println("Sad");
+        }
+    }
+    
+    public static void check_equal(BST set1, BST set2) {
+        if ((set1.diff(set2)).isEmptyHuh() && (set2.diff(set1)).isEmptyHuh()) {
+            if (set1.equal(set2)) {
+                System.out.println("Success for check_equal");
+            } else {
+                System.out.println("Failure for check_equal");
+            }
+        } else if(!set1.equal(set2)) {
+            System.out.println("Success for check_equal");
+        } else {
+            System.out.println("Failure for check_equal");
         }
     }
 
@@ -243,18 +288,32 @@ public class FiniteSet {
         BST mt = new Empty();
         BST not_mt5 = new notEmpty(5, (new Empty()), (new Empty()));
         for(int i = 0; i < 10; i++) {
+            int inty = randomInt(0,100);
             int lengthy = randomInt(0,10);
             int lengthy2 = randomInt(0,10);
             int lengthy3 = randomInt(0,10);
-            BST x = randomBST(lengthy);
-            BST y = randomBST(lengthy2);
-            BST z = randomBST(lengthy3);
+            BST x = randomBST(10);
+            BST y = randomBST(10);
+            BST z = randomBST(10);
             check_union(x, y);
             check_add(x);
             check_add(y);
             check_remove(x);
             check_remove(y);
             check_subset(x,y,z);
+            check_empty(x);
+            check_empty(y);
+            check_empty(z);
+            check_empty(mt);
+            check_inter(x, y, inty);
+            System.out.println(x.equal(x));
+            System.out.println(x.equal(y));
+            System.out.println(y.equal(y));
+            System.out.println(y.equal(z));
+//            check_equal(x, x);
+//            check_equal(x, y);
+//            check_equal(y, y);
+//            check_equal(y, z);
         }
         
         
