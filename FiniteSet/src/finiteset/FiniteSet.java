@@ -145,11 +145,12 @@ public class FiniteSet {
         }
         
         public boolean subset(BST set) {
-            if(!set.member(here)) {
-                return false;
-            } else {
-                return (lefty.subset(set) && righty.subset(set));
-            }
+            return (set.member(here) && lefty.subset(set) && righty.subset(set));
+//            if(set.member(here)) {
+//                return (lefty.subset(set) && righty.subset(set));
+//            } else {
+//                return false;
+//            }
         }
         
     }
@@ -160,12 +161,16 @@ public class FiniteSet {
         return rand.nextInt((max - min) + 1) + min;
     }
     
-    public static BST randomBST( int lengthy ) {
-        if(lengthy == 0) {
-            return new Empty();
+    public static BST randomBST(BST temp, int lengthy) {
+        if (lengthy == 0) {
+            return temp;
         } else {
-            return new notEmpty(randomInt(0,10),randomBST(lengthy - 1),
-                    randomBST(lengthy - 1));
+            int inty = randomInt(0, 100);
+            if (!temp.member(inty)) {
+                return randomBST(temp.add(inty), lengthy - 1);
+            } else {
+                return randomBST(temp, lengthy);
+            }
         }
     }
     
@@ -214,22 +219,17 @@ public class FiniteSet {
     
     //check the following property of union:
     //member (union set1 set2) elt = (member set1 elt || member set2 elt)
-    public static void check_union( BST set1, BST set2 ) {
-        int elt = randomInt(0,100);
-        BST temp = (set1.union(set2)).add(elt);
-        if (temp.member(elt)) {
-            if (set1.member(elt) || set2.member(elt)) {
-                System.out.println("Success for check_union");
-            }
+    public static void check_union(BST set1, BST set2) {
+        int elt = randomInt(0, 100);
+        BST set1_temp = set1.add(elt);
+        BST set2_temp = set2.add(elt);
+        BST temp1 = (set1_temp.union(set2));
+        BST temp2 = (set2_temp.union(set1));
+        if (temp1.member(elt) && temp2.member(elt)) {
+            System.out.println("Success for check_union");
         } else {
             System.out.println("Failure for check_union");
         }
-//        if ((set1.add(elt)).union(set2).member(elt) &&
-//                set1.union(set2.add(elt)).member(elt)) {
-//            System.out.println("Success for check_union");
-//        } else {
-//            System.out.println("Failure for check_union");
-//        }
     }
     
     //check a property of isEmptyHuh:
@@ -284,18 +284,22 @@ public class FiniteSet {
     }
 
     public static void main(String[] args) {
-        
+//        System.out.println("Test");
         BST mt = new Empty();
+//        System.out.println("Test2");
         BST not_mt5 = new notEmpty(5, (new Empty()), (new Empty()));
+//        System.out.println("Test3");
         for(int i = 0; i < 10; i++) {
             int inty = randomInt(0,100);
             int lengthy = randomInt(0,10);
             int lengthy2 = randomInt(0,10);
             int lengthy3 = randomInt(0,10);
-            BST x = randomBST(10);
-            BST y = randomBST(10);
-            BST z = randomBST(10);
+            BST x = randomBST(mt, lengthy);
+            BST y = randomBST(mt, lengthy2);
+            BST z = randomBST(mt, lengthy3);
+//            System.out.println("Test4");
             check_union(x, y);
+//            System.out.println("Test5");
             check_add(x);
             check_add(y);
             check_remove(x);
@@ -310,10 +314,10 @@ public class FiniteSet {
             System.out.println(x.equal(y));
             System.out.println(y.equal(y));
             System.out.println(y.equal(z));
-//            check_equal(x, x);
-//            check_equal(x, y);
-//            check_equal(y, y);
-//            check_equal(y, z);
+            check_equal(x, x);
+            check_equal(x, y);
+            check_equal(y, y);
+            check_equal(y, z);
         }
         
         
