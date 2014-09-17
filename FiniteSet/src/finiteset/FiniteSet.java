@@ -101,12 +101,12 @@ public class FiniteSet {
         }
         
         public BST add(int thing) {
-            if (this.here == thing) {
+            if (here == thing) {
                 return this;
-            } else if(thing < this.here) {
-                return new notEmpty(this.here, this.lefty.add(thing), this.righty);
+            } else if(thing < here) {
+                return new notEmpty(here, lefty.add(thing), righty);
             } else {
-                return new notEmpty(this.here, this.lefty, this.righty.add(thing));
+                return new notEmpty(here, lefty, righty.add(thing));
             }
         }
         
@@ -145,7 +145,8 @@ public class FiniteSet {
         }
         
         public boolean subset(BST set) {
-            return (set.member(here) && lefty.subset(set) && righty.subset(set));
+            return (set.member(here) && lefty.subset(set) 
+                    && righty.subset(set));
 //            if(set.member(here)) {
 //                return (lefty.subset(set) && righty.subset(set));
 //            } else {
@@ -277,6 +278,7 @@ public class FiniteSet {
                 System.out.println("Failure for check_equal");
             }
         } else if(!set1.equal(set2)) {
+//            System.out.println("Aux");
             System.out.println("Success for check_equal");
         } else {
             System.out.println("Failure for check_equal");
@@ -310,6 +312,8 @@ public class FiniteSet {
             check_empty(z);
             check_empty(mt);
             check_inter(x, y, inty);
+            BST a = x.add(inty);
+            System.out.println(x.subset(a));
             System.out.println(x.equal(x));
             System.out.println(x.equal(y));
             System.out.println(y.equal(y));
