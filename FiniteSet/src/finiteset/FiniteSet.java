@@ -284,7 +284,9 @@ public class FiniteSet {
     }
 
     //check the following property of union:
-    //member (union set1 set2) elt = (member set1 elt || member set2 elt)
+    //for a random element elt, if elt is added to two sets (1 and 2), the union
+    //of the added set (1_add) and (2) should contain elt (2_add.union(1) should
+    //return the same)
     public static void check_union(BST set1, BST set2) {
         int elt = randomInt(0, 100);
         BST set1_temp = set1.add(elt);
