@@ -248,8 +248,8 @@ public class FiniteSet {
     public static void check_remove(BST set) {
         int elt = randomInt(0, 10);
         BST remove_set = set.remove(elt);
-        if (remove_set.cardinality() <= set.cardinality()) {
-            //               && (remove_set.member(elt) == false)) {
+        if ((remove_set.cardinality() <= set.cardinality())
+                && (remove_set.member(elt) == false)) {
             System.out.println("Success for check_remove");
         } else {
             System.out.println("Failure for check_remove");
